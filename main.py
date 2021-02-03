@@ -5,14 +5,6 @@ import urllib.parse
 from dotenv import load_dotenv
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument("bitlink", help="ссылка на сайт/битлинк")
-arguments_all = parser.parse_args()
-ARGS = arguments_all.bitlink
-load_dotenv()
-BITLY_TOKEN = os.getenv("BITLY_TOKEN")
-URL_CLICK_SUMMARY_TEMPLATE = "https://api-ssl.bitly.com/v4/bitlinks/{}/clicks/summary"
-
 
 def count_clicks(token, user_input):
     parsed_url = urllib.parse.urlparse(user_input)
@@ -31,9 +23,7 @@ def count_clicks(token, user_input):
 
 
 def shorten_link(token, url):
-    parsed_url = urllib.parse.urlparse(user_input)
-    url_cut = "{}".format(parsed_url.path)
-    bitlink_data = {"long_url": url_cut}
+    bitlink_data = {"long_url": url}
     header = {
         "Authorization": "Bearer {}".format(token)
     }
@@ -52,15 +42,18 @@ def check_link(url, token):
     }
     url_check = 'https://api-ssl.bitly.com/v4/bitlinks/{}'.format(url)
     response = requests.get(url_check, headers=header)
-    if response.ok:
-        is_bitlink = True
-    else:
-        is_bitlink = False
-    return is_bitlink
+    return response.ok
 
 
 if __name__ == "__main__":
-    print(ARGS)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("bitlink", help="ссылка на сайт/битлинк")
+    arguments_all = parser.parse_args()
+    ARGS = arguments_all.bitlink
+    URL_CLICK_SUMMARY_TEMPLATE = "https://api-ssl.bitly.com/v4/bitlinks/{}/clicks/summary"
+    load_dotenv()
+    BITLY_TOKEN = os.getenv("BITLY_TOKEN")
+
     if not check_link(ARGS, BITLY_TOKEN):
         bitlink = shorten_link(BITLY_TOKEN, ARGS)
         if bitlink == "error":
@@ -68,5 +61,8 @@ if __name__ == "__main__":
         else:
             print("Битлинк:", bitlink)
     else:
-        clicks = count_clicks(BITLY_TOKEN, bitlink)
-        print("Количество кликов:", clicks)
+        clicks = count_clicks(BITLY_TOKEN, ARGS)
+        if clicks == "error":
+            print("Ошибка в программе, или в ссылке.")
+        else:
+            print("Количество кликов:", clicks)
