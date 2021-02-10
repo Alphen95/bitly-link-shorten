@@ -5,12 +5,7 @@ import urllib.parse
 from dotenv import load_dotenv
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument("bitlink", help="ссылка на сайт/битлинк")
-args = parser.parse_args()
-URL_INPUT = args.bitlink
 URL_CLICK_SUMMARY_TEMPLATE = "https://api-ssl.bitly.com/v4/bitlinks/{}/clicks/summary"
-BITLY_TOKEN = os.getenv("BITLY_TOKEN")
 
 
 def count_clicks(token, user_input):
@@ -54,6 +49,11 @@ def check_link(url, token):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("bitlink", help="ссылка на сайт/битлинк")
+    args = parser.parse_args()
+    URL_INPUT = args.bitlink
+    BITLY_TOKEN = os.getenv("BITLY_TOKEN")
     load_dotenv()
     if not check_link(URL_INPUT, BITLY_TOKEN):
         bitlink = shorten_link(BITLY_TOKEN, URL_INPUT)
