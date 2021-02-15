@@ -25,7 +25,6 @@ def count_clicks(token, user_input):
 
 
 def shorten_link(token, url):
-    print("a")
     bitlink_data = {"long_url": url}
     header = {
         "Authorization": "Bearer {}".format(token)
