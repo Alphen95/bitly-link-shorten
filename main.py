@@ -52,17 +52,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("bitlink", help="ссылка на сайт/битлинк")
     args = parser.parse_args()
-    URL_INPUT = args.bitlink
-    BITLY_TOKEN = os.getenv("BITLY_TOKEN")
+    url_input = args.bitlink
     load_dotenv()
-    if not check_link(URL_INPUT, BITLY_TOKEN):
-        bitlink = shorten_link(BITLY_TOKEN, URL_INPUT)
+    bitly_token = os.getenv("BITLY_TOKEN")
+    if not check_link(url_input, bitly_token):
+        bitlink = shorten_link(bitly_token, url_input)
         if bitlink == "error":
             print("Был введён неверный URL, попробуйте заново.")
         else:
             print("Битлинк:", bitlink)
     else:
-        clicks = count_clicks(BITLY_TOKEN, URL_INPUT)
+        clicks = count_clicks(bitly_token, url_input)
         if clicks == "error":
             print("Ошибка в программе, или в ссылке.")
         else:
